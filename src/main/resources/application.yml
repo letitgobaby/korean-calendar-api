@@ -1,0 +1,25 @@
+
+spring:
+  # profiles:
+  #   active: dev
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  
+  datasource:
+    url: jdbc:h2:~/test;
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+    initialization: always
+    initialization-mode: always
+
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    show_spl: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none

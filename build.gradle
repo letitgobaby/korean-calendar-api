@@ -1,17 +1,5 @@
-buildscript {
-	ext {
-		springBootVersion = '2.5.0'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
-}
-
 plugins {
-	id 'org.springframework.boot' version '2.5.0'
+	id 'org.springframework.boot' version '2.5.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'war'
@@ -23,7 +11,6 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.calendar'
 version = '0.0.1-SNAPSHOT'
-// sourceCompatibility = '1.8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -42,15 +29,21 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'com.ibm.icu:icu4j:69.1'
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.batch:spring-batch-test'
