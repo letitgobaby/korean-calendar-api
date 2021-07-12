@@ -24,27 +24,20 @@ public class CalendarBuilderService {
   
   public JSONArray getYearCalendar(int year, int month) {
 		Calendar cal = Calendar.getInstance();
-		// cal.set(Calendar.YEAR, year);
-		// cal.set(Calendar.MONTH, month); 
 		cal.set(year, month - 1, 1); 
 		
-		int thisMonthLastDate = cal.getActualMaximum(Calendar.DATE);
-		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+		int thisMonthLastDate = cal.getActualMaximum(Calendar.DATE); // 해당 달의 마지막 날
+		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1일의 요일 계산
 
-		JSONArray monthArr = new JSONArray(); 
+		JSONArray weekArr = new JSONArray(); 
 
-		int count = 1;
+		int count = 1; // 일자 카운트 1일 부터 시작
 		for (int week = 0; week < 6; week++) {
-			ArrayList weekArr = new ArrayList();
+			ArrayList dayArr = new ArrayList();
 			if (count == 1) {
 				for (int j = 1; j < dayOfWeek; j++) {
-
-
 					JSONObject obj = new JSONObject();
-					obj.put("00", "toto");
-
-
-					weekArr.add(obj);
+					dayArr.add(obj);
 				}
 			}
 
@@ -57,30 +50,30 @@ public class CalendarBuilderService {
 							break;
 						}
 					}
-
-					weekArr.add(info);
+					dayArr.add(info);
 					count++;
 				} else {
-					weekArr.add("00");
+
+					dayArr.add("00");
 				}
 			}
 
-			dayOfWeek = 1;
-			monthArr.add(weekArr);
+			dayOfWeek = 1; // 1(일요일)로 초기화
+			weekArr.add(dayArr);
 		}
 
-		return monthArr;
+		return weekArr;
   }
 
 	private DateInfo dateBuilder(int year, int month, int date) {
 		Solar solar = solarInfo(year, month, date);
 		Lunar lunar = lunarInfo(year, month, date);
 		
-		return new DateInfo(solar, lunar, isHoliday(solar, lunar));
+		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
 
 	// NEED REFACTORING
-	private String isHoliday(Solar solar, Lunar lunar) {
+	private String holidayInfo(Solar solar, Lunar lunar) {
 		Holiday holiday = holidayRepository.findHoliday(
 			solar.getSolarMonth(), solar.getSolarDay(), 
 			lunar.getLunarMonth(), lunar.getLunarDay()
