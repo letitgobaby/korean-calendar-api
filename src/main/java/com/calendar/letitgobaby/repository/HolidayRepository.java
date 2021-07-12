@@ -7,17 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface HolidayRepository extends JpaRepository<Holiday, Long> {
-
+  
   @Query(
     nativeQuery = true, 
-    value = "select * from HOLIDAY where MONTH = :month AND DAY = :date AND ISLUNAR = false"
+    value = "select * from HOLIDAY " +
+            "where (MONTH = :smonth AND DAY = :sdate AND ISLUNAR = false) " + 
+            "OR (MONTH = :lmonth AND DAY = :ldate AND ISLUNAR = true) "
   )
-  Holiday findSolarHoliday(@Param("month") int month, @Param("date") int date);
-
-  @Query(
-    nativeQuery = true, 
-    value = "select * from HOLIDAY where MONTH = :month AND DAY = :date AND ISLUNAR = true"
-  )
-  Holiday findLunarHoliday(@Param("month") int month, @Param("date") int date);
+  Holiday findHoliday(
+    @Param("smonth") int smonth, @Param("sdate") int sdate, 
+    @Param("lmonth") int lmonth, @Param("ldate") int ldate
+  );
 
 }

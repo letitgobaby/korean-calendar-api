@@ -49,7 +49,6 @@ public class CalendarBuilderService {
 				if (count <= thisMonthLastDate) {
 					DateInfo info = dayInfo(year, month, count);
 					weekArr.add(info);
-					// weekArr.add(dayInfo(year, month, count));
 					count++;
 				} else {
 					weekArr.add("00");
@@ -73,12 +72,14 @@ public class CalendarBuilderService {
 	// NEED REFACTORING
 	private String isHoliday(Solar solar, Lunar lunar) {
 		Holiday holiday;
-		holiday = holidayRepository.findSolarHoliday(solar.getSolarMonth(), solar.getSolarDay());
-		if (holiday == null) {
-			holiday = holidayRepository.findLunarHoliday(lunar.getLunarMonth(), lunar.getLunarDay());
-			if (holiday == null) { return "none";	}
-		}
+		// holiday = holidayRepository.findSolarHoliday(solar.getSolarMonth(), solar.getSolarDay());
+		// if (holiday == null) {
+		// 	holiday = holidayRepository.findLunarHoliday(lunar.getLunarMonth(), lunar.getLunarDay());
+		// 	if (holiday == null) { return "none";	}
+		// }
 
+		holiday = holidayRepository.findHoliday(solar.getSolarMonth(), solar.getSolarDay(), lunar.getLunarMonth(), lunar.getLunarDay());
+		if (holiday == null) return "none";
 		return holiday.getDateName();
 	}
 
