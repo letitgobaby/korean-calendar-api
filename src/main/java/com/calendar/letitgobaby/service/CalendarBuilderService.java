@@ -6,6 +6,7 @@ import java.util.Calendar;
 import com.calendar.letitgobaby.repository.HolidayRepository;
 import com.calendar.letitgobaby.util.LunarSolarConverter;
 import com.calendar.letitgobaby.vo.DateInfo;
+import com.calendar.letitgobaby.vo.Holiday;
 import com.calendar.letitgobaby.vo.Lunar;
 import com.calendar.letitgobaby.vo.Solar;
 import com.ibm.icu.util.ChineseCalendar;
@@ -20,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class CalendarBuilderService {
 
   private final HolidayRepository holidayRepository;
-  private final LunarSolarConverter converter;
+  // private final LunarSolarConverter converter;
   
   public JSONArray getYearCalendar(int year, int month) {
 		Calendar cal = Calendar.getInstance();
@@ -63,18 +64,22 @@ public class CalendarBuilderService {
   }
 
 	private DateInfo dayInfo(int year, int month, int date) {
-		return new DateInfo(
-			solarInfo(year, month, date),
-			lunarInfo(year, month, date), 
-			isHoliday(year, month, date)
-		);
+		Solar solar = solarInfo(year, month, date);
+		Lunar lunar = lunarInfo(year, month, date);
+
+		return new DateInfo(solar, lunar, isHoliday(solar, lunar));
 	}
 
-	// TODO
-	private boolean isHoliday(int year, int month, int date) {
-		Lunar lunar = converter.SolarToLunar(new Solar(year, month, date));
+	// NEED REFACTORING
+	private String isHoliday(Solar solar, Lunar lunar) {
+		Holiday holiday;
+		holiday = holidayRepository.findSolarHoliday(solar.getSolarMonth(), solar.getSolarDay());
+		if (holiday == null) {
+			holiday = holidayRepository.findLunarHoliday(lunar.getLunarMonth(), lunar.getLunarDay());
+			if (holiday == null) { return "none";	}
+		}
 
-		return false;
+		return holiday.getDateName();
 	}
 
 	private Lunar lunarInfo(int year, int month, int date) {

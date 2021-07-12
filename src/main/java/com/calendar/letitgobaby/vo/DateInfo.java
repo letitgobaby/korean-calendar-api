@@ -11,11 +11,11 @@ public class DateInfo {
 
   private Solar solar;
   private Lunar lunar;
-  private boolean isHoliday;
+  private String isHoliday;
   
   public DateInfo() {}
 
-  public DateInfo(Solar solar, Lunar lunar, boolean isHoliday) {
+  public DateInfo(Solar solar, Lunar lunar, String isHoliday) {
     this.solar = solar;
     this.lunar = lunar;
     this.isHoliday = isHoliday;

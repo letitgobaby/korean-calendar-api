@@ -9,7 +9,6 @@ import javax.persistence.Table;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -36,6 +35,8 @@ public class Holiday {
 
   @Column(name = "ISLUNAR")
   private boolean isLunar;
+
+  public Holiday() {}
 
   @Builder
   public Holiday(String dateName, int month, int day, boolean isLunar) {
