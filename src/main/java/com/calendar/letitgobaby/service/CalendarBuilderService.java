@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.calendar.letitgobaby.repository.HolidayRepository;
-import com.calendar.letitgobaby.util.LunarSolarConverter;
 import com.calendar.letitgobaby.vo.DateInfo;
+import com.calendar.letitgobaby.vo.DayOfWeekType;
 import com.calendar.letitgobaby.vo.Holiday;
 import com.calendar.letitgobaby.vo.Lunar;
 import com.calendar.letitgobaby.vo.Solar;
@@ -21,12 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class CalendarBuilderService {
 
   private final HolidayRepository holidayRepository;
-  // private final LunarSolarConverter converter;
   
   public JSONArray getYearCalendar(int year, int month) {
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month); 
+		// cal.set(Calendar.YEAR, year);
+		// cal.set(Calendar.MONTH, month); 
 		cal.set(year, month - 1, 1); 
 		
 		int thisMonthLastDate = cal.getActualMaximum(Calendar.DATE);
@@ -39,15 +38,26 @@ public class CalendarBuilderService {
 			ArrayList weekArr = new ArrayList();
 			if (count == 1) {
 				for (int j = 1; j < dayOfWeek; j++) {
+
+
 					JSONObject obj = new JSONObject();
 					obj.put("00", "toto");
+
+
 					weekArr.add(obj);
 				}
 			}
 
 			for (int day = dayOfWeek; day < 8; day++) {
 				if (count <= thisMonthLastDate) {
-					DateInfo info = dayInfo(year, month, count);
+					DateInfo info = dateBuilder(year, month, count);
+					for (DayOfWeekType type : DayOfWeekType.values()) {
+						if (type.getWeekIndex() == day)  {
+							info.setDayOfWeek(type.getValue());
+							break;
+						}
+					}
+
 					weekArr.add(info);
 					count++;
 				} else {
@@ -62,24 +72,22 @@ public class CalendarBuilderService {
 		return monthArr;
   }
 
-	private DateInfo dayInfo(int year, int month, int date) {
+	private DateInfo dateBuilder(int year, int month, int date) {
 		Solar solar = solarInfo(year, month, date);
 		Lunar lunar = lunarInfo(year, month, date);
-
+		
 		return new DateInfo(solar, lunar, isHoliday(solar, lunar));
 	}
 
 	// NEED REFACTORING
 	private String isHoliday(Solar solar, Lunar lunar) {
-		Holiday holiday;
-		// holiday = holidayRepository.findSolarHoliday(solar.getSolarMonth(), solar.getSolarDay());
-		// if (holiday == null) {
-		// 	holiday = holidayRepository.findLunarHoliday(lunar.getLunarMonth(), lunar.getLunarDay());
-		// 	if (holiday == null) { return "none";	}
-		// }
+		Holiday holiday = holidayRepository.findHoliday(
+			solar.getSolarMonth(), solar.getSolarDay(), 
+			lunar.getLunarMonth(), lunar.getLunarDay()
+		);
 
-		holiday = holidayRepository.findHoliday(solar.getSolarMonth(), solar.getSolarDay(), lunar.getLunarMonth(), lunar.getLunarDay());
 		if (holiday == null) return "none";
+
 		return holiday.getDateName();
 	}
 
@@ -119,52 +127,5 @@ public class CalendarBuilderService {
 
 		return result;
 	}
-
-
-  // private JSONObject dayInfo(int year, int month, int date) {
-	// 	JSONParser parser = new JSONParser();
-	// 	JSONObject obj = new JSONObject();
-
-	// 	obj.put("solar", solarInfo(year, month, date));
-	// 	obj.put("lunar", lunarInfo(year, month, date));
-	// 	obj.put("isHoliday", isHoliday(year, month, date));
-
-	// 	return obj;
-	// }
-
-	// private JSONObject isHoliday(int year, int month, int date) {
-	// 	JSONObject obj = new JSONObject();
-	// 	Lunar lunar = converter.SolarToLunar(new Solar(year, month, date));
-
-	// 	return obj;
-	// }
-
-	// private JSONObject lunarInfo(int year, int month, int date) {
-	// 	JSONObject obj = new JSONObject();
-	// 	Lunar lunar = converter.SolarToLunar(new Solar(year, month, date));
-	// 	LocalDateTime dateStr = LocalDateTime.of(
-	// 		lunar.getLunarYear(), 
-	// 		lunar.getLunarMonth(), 
-	// 		lunar.getLunarDay(), 0,0,0);
-
-	// 	obj.put("fulldate", dateStr.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-	// 	obj.put("year", lunar.getLunarYear());
-	// 	obj.put("month", lunar.getLunarMonth());
-	// 	obj.put("date", lunar.getLunarDay());
-
-	// 	return obj;
-	// }
-
-	// private JSONObject solarInfo(int year, int month, int date) {
-	// 	JSONObject obj = new JSONObject();
-	// 	LocalDateTime dateStr = LocalDateTime.of(year, month, date, 0,0,0);
-	// 	obj.put("fulldate", dateStr.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-	// 	obj.put("year", year);
-	// 	obj.put("month", month);
-	// 	obj.put("date", date);
-
-	// 	return obj;
-	// }
-
 
 }
