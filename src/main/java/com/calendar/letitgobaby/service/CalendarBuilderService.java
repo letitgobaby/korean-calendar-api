@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.calendar.letitgobaby.repository.HolidayRepository;
+import com.calendar.letitgobaby.util.LunarSolarConverter;
 import com.calendar.letitgobaby.vo.DateInfo;
 import com.calendar.letitgobaby.vo.DayOfWeekType;
 import com.calendar.letitgobaby.vo.Holiday;
 import com.calendar.letitgobaby.vo.Lunar;
 import com.calendar.letitgobaby.vo.Solar;
-import com.ibm.icu.util.ChineseCalendar;
 
 import org.json.simple.*;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class CalendarBuilderService {
 
   private final HolidayRepository holidayRepository;
+	private final LunarSolarConverter converter;
   
   public JSONArray getYearCalendar(int year, int month) {
 		Calendar cal = Calendar.getInstance();
@@ -66,8 +67,8 @@ public class CalendarBuilderService {
   }
 
 	private DateInfo dateBuilder(int year, int month, int date) {
-		Solar solar = solarInfo(year, month, date);
-		Lunar lunar = lunarInfo(year, month, date);
+		Solar solar = converter.solarInfo(year, month, date);
+		Lunar lunar = converter.lunarInfo(year, month, date);
 		
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
@@ -82,43 +83,6 @@ public class CalendarBuilderService {
 		if (holiday == null) return "none";
 
 		return holiday.getDateName();
-	}
-
-	private Lunar lunarInfo(int year, int month, int date) {
-		ChineseCalendar chinaCal = new ChineseCalendar();
-		Calendar cal = Calendar.getInstance() ;
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month - 1);
-		cal.set(Calendar.DAY_OF_MONTH, date);
-		chinaCal.setTimeInMillis(cal.getTimeInMillis());
-		 
-		int lyear = chinaCal.get(ChineseCalendar.EXTENDED_YEAR) - 2637 ;
-		int lmonth = chinaCal.get(ChineseCalendar.MONTH) + 1;
-		int lday = chinaCal.get(ChineseCalendar.DAY_OF_MONTH);
-		int leap = chinaCal.get(ChineseCalendar.IS_LEAP_MONTH);
-
-		Lunar lunar = new Lunar(lyear, lmonth, lday, leap == 0 ? false : true);
-		lunar.setFulldate(
-			dateParser(lunar.getLunarYear(), lunar.getLunarMonth(), lunar.getLunarDay())
-		);
-
-		return lunar;
-	}
-
-	private Solar solarInfo(int year, int month, int date) {
-		Solar solar = new Solar(year, month, date);
-		solar.setFulldate(dateParser(year, month, date));
-
-		return solar;
-	}
-
-	private String dateParser(int year, int month, int date) {
-		String result = "";
-		result += Integer.toString(year);
-		result += month < 10 ? "0" + Integer.toString(month) : Integer.toString(month);
-		result += date < 10 ? "0" + Integer.toString(date) : Integer.toString(date);
-
-		return result;
 	}
 
 }
