@@ -23,14 +23,14 @@ public class CalendarBuilderService {
   private final HolidayRepository holidayRepository;
 	private final LunarSolarConverter converter;
   
-  public JSONArray getYearCalendar(int year, int month) {
+  public ArrayList getMonthCalendar(int year, int month) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month - 1, 1); 
 		
 		int thisMonthLastDate = cal.getActualMaximum(Calendar.DATE); // 해당 달의 마지막 날
 		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1일의 요일 계산
 
-		JSONArray weekArr = new JSONArray(); 
+		ArrayList weekArr = new ArrayList(); 
 
 		int count = 1; // 일자 카운트 1일 부터 시작
 		for (int week = 0; week < 6; week++) {
@@ -51,6 +51,7 @@ public class CalendarBuilderService {
 							break;
 						}
 					}
+
 					dayArr.add(info);
 					count++;
 				} else {
@@ -73,10 +74,10 @@ public class CalendarBuilderService {
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
 
-	// NEED REFACTORING
+	// TODO: 대체휴일 계산 로직 추가
 	private String holidayInfo(Solar solar, Lunar lunar) {
 		Holiday holiday = holidayRepository.findHoliday(
-			solar.getSolarMonth(), solar.getSolarDay(), 
+			solar.getSolarMonth(), solar.getSolarDay(),
 			lunar.getLunarMonth(), lunar.getLunarDay()
 		);
 

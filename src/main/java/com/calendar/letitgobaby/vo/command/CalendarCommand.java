@@ -17,9 +17,6 @@ public class CalendarCommand {
   @NotNull @Min(1)
   private int year;
 
-  @NotNull
-  private boolean isHoliday;
-
   @Min(1) @Max(value=12, message="month는 1 ~ 12 사이의 숫자를 입력하세요.")
   private int month;
 
