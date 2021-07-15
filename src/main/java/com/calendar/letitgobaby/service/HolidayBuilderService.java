@@ -21,20 +21,18 @@ public class HolidayBuilderService {
   private final HolidayRepository holidayRepository;
   private final LunarSolarConverter converter;
 
-  public ArrayList getHoliday() {
+  public ArrayList getHoliday(int targetYear) {
     ArrayList holidayArr = new ArrayList();
     List<Holiday> hois = holidayRepository.findAll();
-    
-    int tempYear = 2021;
 
     for (int i = 0; i < hois.size(); i++) {
       Holiday holidayObj = hois.get(i);
       HolidayPayload payload;
       if (holidayObj.isLunar()) {
-        Solar solar = converter.lunarToSolar(tempYear, holidayObj.getMonth(), holidayObj.getDay());
+        Solar solar = converter.lunarToSolar(targetYear, holidayObj.getMonth(), holidayObj.getDay());
         payload = new HolidayPayload(solar.getSolarYear(), solar.getSolarMonth(), solar.getSolarDay(), holidayObj.getDateName());
       } else {
-        payload = new HolidayPayload(tempYear, holidayObj.getMonth(), holidayObj.getDay(), holidayObj.getDateName());
+        payload = new HolidayPayload(targetYear, holidayObj.getMonth(), holidayObj.getDay(), holidayObj.getDateName());
       }
 
       holidayArr.add(payload);
