@@ -19,7 +19,7 @@ public class HolidayController {
 
   private final HolidayBuilderService holidayService;
 
-  @GetMapping("/holiday/:targetYear")
+  @GetMapping("/holiday/{targetYear}")
   public ResponseEntity getAllHoliday(@PathVariable int targetYear) {
     ArrayList results = holidayService.getHoliday(targetYear);
     return ResponseEntity.ok().body(results);
