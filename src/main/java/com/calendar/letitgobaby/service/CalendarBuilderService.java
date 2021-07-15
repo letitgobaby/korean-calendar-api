@@ -26,7 +26,6 @@ public class CalendarBuilderService {
   public ArrayList getMonthCalendar(int year, int month, ArrayList<Holiday> holiList) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month - 1, 1); 
-		
 		int thisMonthLastDate = cal.getActualMaximum(Calendar.DATE); // 해당 달의 마지막 날
 		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1일의 요일 계산
 
@@ -35,16 +34,19 @@ public class CalendarBuilderService {
 		int count = 1; // 일자 카운트 1일 부터 시작
 		for (int week = 0; week < 6; week++) {
 			ArrayList dayArr = new ArrayList();
+
+			// 첫 배열 전달 데이터 넣기
 			if (count == 1) {
 				for (int j = 1; j < dayOfWeek; j++) {
-					JSONObject obj = new JSONObject();
-					dayArr.add(obj);
+					DateInfo lastInfo = dayOfWeekInfo( beforeDateBuilder(year, month, dayOfWeek - (j+1)), j);
+					dayArr.add(lastInfo);
 				}
 			}
 
+			// 해당 월 데이터 넣기
 			for (int index = dayOfWeek; index < 8; index++) {
 				if (count <= thisMonthLastDate) {
-					DateInfo info = dateBuilder(year, month, count);
+					DateInfo info = dayOfWeekInfo( dateBuilder(year, month, count), index);
 
 					// specificDay(사용자 휴일) 처리
 					if (info.getIsHoliday().equals("none") && holiList != null) {
@@ -56,18 +58,12 @@ public class CalendarBuilderService {
 						});
 					}
 
-					for (DayOfWeekType type : DayOfWeekType.values()) {
-						if (type.getWeekIndex() == index)  {
-							info.setDayOfWeek(type.getValue());
-							break;
-						}
-					}
+					dayArr.add(info);	count++;
 
-					dayArr.add(info);
-					count++;
 				} else {
-
-					dayArr.add("00");
+					// 마지막 열 다음달 데이터 넣기
+					DateInfo nextInfo = dayOfWeekInfo(nextDateBuilder(year, month, count - thisMonthLastDate), index);
+					dayArr.add(nextInfo); count++;
 				}
 			}
 
@@ -81,11 +77,49 @@ public class CalendarBuilderService {
 	private DateInfo dateBuilder(int year, int month, int date) {
 		Solar solar = converter.solarInfo(year, month, date);
 		Lunar lunar = converter.lunarInfo(year, month, date);
-		
+
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
 
-	// TODO: 대체휴일 계산 로직 추가
+	private DateInfo beforeDateBuilder(int year, int month, int count) {
+		Solar solar;
+		Lunar lunar;
+		if ((month - 2) < 1) {
+			solar = converter.solarInfo(year - 1, 12, getLastDate(year - 1, 12) - count);
+			lunar = converter.lunarInfo(year - 1, 12, getLastDate(year - 1, 12) - count);
+		} else {
+			solar = converter.solarInfo(year, month - 1, getLastDate(year, month - 1) - count);
+			lunar = converter.lunarInfo(year, month - 1, getLastDate(year, month - 1) - count);
+		}
+
+		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
+	}
+
+	private DateInfo nextDateBuilder(int year, int month, int count) {
+		Solar solar; 
+		Lunar lunar;
+		if ((month + 1) > 12) {
+			solar = converter.solarInfo(year + 1, 1, count);
+			lunar = converter.lunarInfo(year + 1, 1, count);
+		} else {
+			solar = converter.solarInfo(year, month + 1, count);
+			lunar = converter.lunarInfo(year, month + 1, count);
+		}
+
+		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
+	}
+
+	private DateInfo dayOfWeekInfo(DateInfo info, int index) {
+		for (DayOfWeekType type : DayOfWeekType.values()) {
+			if (type.getWeekIndex() == index)  {
+				info.setDayOfWeek(type.getValue());
+				break;
+			}
+		}
+
+		return info;
+	}
+
 	private String holidayInfo(Solar solar, Lunar lunar) {
 		Holiday holiday = holidayRepository.findHoliday(
 			solar.getSolarMonth(), solar.getSolarDay(),
@@ -96,5 +130,13 @@ public class CalendarBuilderService {
 
 		return holiday.getDateName();
 	}
+
+	private int getLastDate(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month - 1, 1);
+
+		return cal.getActualMaximum(Calendar.DATE);
+	}
+
 
 }
