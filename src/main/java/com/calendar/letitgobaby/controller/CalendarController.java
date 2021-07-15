@@ -25,7 +25,7 @@ public class CalendarController {
   /**
    * Retrieve the instance data for the target control.
    * 
-   * @param {int} year, ?month
+   * @param {int} year, ?month, ?specificDay
    * @return {JSONArray} - 1년 달력 데이터 or 한달 달력 데이터
    * @throws error int가 아닌 값이 들어올때, 필수값인 year이 없을 때
    */

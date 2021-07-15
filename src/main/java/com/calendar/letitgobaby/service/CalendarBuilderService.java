@@ -11,7 +11,6 @@ import com.calendar.letitgobaby.vo.Holiday;
 import com.calendar.letitgobaby.vo.Lunar;
 import com.calendar.letitgobaby.vo.Solar;
 
-import org.json.simple.*;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -74,6 +73,7 @@ public class CalendarBuilderService {
 		return weekArr;
   }
 
+
 	private DateInfo dateBuilder(int year, int month, int date) {
 		Solar solar = converter.solarInfo(year, month, date);
 		Lunar lunar = converter.lunarInfo(year, month, date);
@@ -81,19 +81,24 @@ public class CalendarBuilderService {
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
 
+
 	private DateInfo beforeDateBuilder(int year, int month, int count) {
+		int lastDate;
 		Solar solar;
 		Lunar lunar;
 		if ((month - 2) < 1) {
-			solar = converter.solarInfo(year - 1, 12, getLastDate(year - 1, 12) - count);
-			lunar = converter.lunarInfo(year - 1, 12, getLastDate(year - 1, 12) - count);
+			lastDate = getLastDate(year - 1, 12) - count;
+			solar = converter.solarInfo(year - 1, 12, lastDate);
+			lunar = converter.lunarInfo(year - 1, 12, lastDate);
 		} else {
-			solar = converter.solarInfo(year, month - 1, getLastDate(year, month - 1) - count);
-			lunar = converter.lunarInfo(year, month - 1, getLastDate(year, month - 1) - count);
+			lastDate = getLastDate(year, month - 1) - count;
+			solar = converter.solarInfo(year, month - 1, lastDate);
+			lunar = converter.lunarInfo(year, month - 1, lastDate);
 		}
 
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
+
 
 	private DateInfo nextDateBuilder(int year, int month, int count) {
 		Solar solar; 
@@ -109,6 +114,7 @@ public class CalendarBuilderService {
 		return new DateInfo(solar, lunar, holidayInfo(solar, lunar));
 	}
 
+
 	private DateInfo dayOfWeekInfo(DateInfo info, int index) {
 		for (DayOfWeekType type : DayOfWeekType.values()) {
 			if (type.getWeekIndex() == index)  {
@@ -120,6 +126,7 @@ public class CalendarBuilderService {
 		return info;
 	}
 
+	
 	private String holidayInfo(Solar solar, Lunar lunar) {
 		Holiday holiday = holidayRepository.findHoliday(
 			solar.getSolarMonth(), solar.getSolarDay(),
@@ -131,6 +138,7 @@ public class CalendarBuilderService {
 		return holiday.getDateName();
 	}
 
+	
 	private int getLastDate(int year, int month) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month - 1, 1);
