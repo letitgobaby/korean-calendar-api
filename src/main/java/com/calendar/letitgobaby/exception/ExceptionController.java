@@ -23,7 +23,7 @@ public class ExceptionController {
     return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
   }
 
-  // @Valid 검증 실패 시 Catch
+  
   @ExceptionHandler(InvalidParameterException.class)
   protected ResponseEntity<ErrorResponse> handleInvalidParameterException(InvalidParameterException e) {
     ErrorResponse response = ErrorResponse.create()
@@ -33,15 +33,6 @@ public class ExceptionController {
     return new ResponseEntity<>(response, HttpStatus.resolve(HttpStatus.BAD_REQUEST.value()));
   }
 
-  // // 모든 예외를 핸들링하여 ErrorResponse 형식으로 반환한다.
-  // @ExceptionHandler(Exception.class)
-  // protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-  //   ErrorResponse response = ErrorResponse.create()
-  //       .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-  //       .message(e.toString());
-
-  //   return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-  // }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   protected ResponseEntity<ErrorResponse> validException(MethodArgumentNotValidException e) {
@@ -53,4 +44,13 @@ public class ExceptionController {
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
+
+  // @ExceptionHandler(Exception.class)
+  // protected ResponseEntity<ErrorResponse> handleException(Exception e) {
+  //   ErrorResponse response = ErrorResponse.create()
+  //       .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+  //       .message(e.toString());
+
+  //   return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+  // }
 }
