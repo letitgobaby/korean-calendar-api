@@ -19,7 +19,7 @@ public class HolidayController {
   private final HolidayBuilderService holidayService;
 
   @GetMapping("/holiday")
-  public ResponseEntity test() {
+  public ResponseEntity getAllHoliday() {
     ArrayList results = holidayService.getHoliday();
     return ResponseEntity.ok().body(results);
   }
