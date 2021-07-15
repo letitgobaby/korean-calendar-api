@@ -30,19 +30,16 @@
 # 달력 API Request
 
 [POST] http(s)://yourURL/calendar 
+
 {
-    // (Number) year만 필수
-	"year": 2021, 
-
-    // (Number) month 넣으면 해당 달 데이터만 받아옴.
-    "month: 8, 
-
-    // (Array) specificDay는 기본 휴일제외한 커스텀 휴일 데이터 넣기.
-	"specificDay": [
+    
+	"year": 2021, // (Number) year만 필수
+    	"month: 8,   // (Number) month 넣으면 해당 달 데이터만 받아옴.
+	"specificDay": [ // (Array) specificDay는 기본 휴일제외한 커스텀 휴일 데이터 넣기.
 		{
-			"dateName": "대체 휴일", // (String)
-			"month": 8, // (Number)
-			"day": 16  // (Number)
+			"dateName": "대체 휴일", // (String) 휴일 명
+			"month": 8, // (Number) 월 입력
+			"day": 16  // (Number)  일 입력
 		},
 		{
 			"dateName": "노는날",
@@ -56,7 +53,6 @@
 
 # 달력 API Response
 
-JSON
 [
   [
     [
