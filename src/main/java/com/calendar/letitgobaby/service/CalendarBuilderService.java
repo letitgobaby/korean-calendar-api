@@ -23,7 +23,7 @@ public class CalendarBuilderService {
   private final HolidayRepository holidayRepository;
 	private final LunarSolarConverter converter;
   
-  public ArrayList getMonthCalendar(int year, int month) {
+  public ArrayList getMonthCalendar(int year, int month, ArrayList<Holiday> holiList) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month - 1, 1); 
 		
@@ -42,11 +42,22 @@ public class CalendarBuilderService {
 				}
 			}
 
-			for (int day = dayOfWeek; day < 8; day++) {
+			for (int index = dayOfWeek; index < 8; index++) {
 				if (count <= thisMonthLastDate) {
 					DateInfo info = dateBuilder(year, month, count);
+
+					// specificDay(사용자 휴일) 처리
+					if (info.getIsHoliday().equals("none") && holiList != null) {
+						int targetDate = count;
+						holiList.forEach(item -> {
+							if (item.getDay() == targetDate && item.getMonth() == month) {
+								info.setIsHoliday(item.getDateName());
+							}
+						});
+					}
+
 					for (DayOfWeekType type : DayOfWeekType.values()) {
-						if (type.getWeekIndex() == day)  {
+						if (type.getWeekIndex() == index)  {
 							info.setDayOfWeek(type.getValue());
 							break;
 						}
