@@ -19,6 +19,12 @@
 
 <br/><br/>
 
+### Document
+
+- http://localhost:8080/swagger-ui
+
+<br/><br/>
+
 ## How to Use
 - 총 2개의 API가 존재
 
