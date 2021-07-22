@@ -146,5 +146,4 @@ public class CalendarBuilderService {
 		return cal.getActualMaximum(Calendar.DATE);
 	}
 
-
 }
