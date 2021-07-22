@@ -48,7 +48,7 @@ public class CalendarBuilderService {
 					DateInfo info = dayOfWeekInfo( dateBuilder(year, month, count), index);
 
 					// specificDay(사용자 휴일) 처리
-					if (info.getIsHoliday().equals("none") && holiList != null) {
+					if (info.getIsHoliday() == null && holiList != null) {
 						int targetDate = count;
 						holiList.forEach(item -> {
 							if (item.getDay() == targetDate && item.getMonth() == month) {
@@ -133,7 +133,7 @@ public class CalendarBuilderService {
 			lunar.getLunarMonth(), lunar.getLunarDay()
 		);
 
-		if (holiday == null) return "none";
+		if (holiday == null) return null;
 
 		return holiday.getDateName();
 	}
