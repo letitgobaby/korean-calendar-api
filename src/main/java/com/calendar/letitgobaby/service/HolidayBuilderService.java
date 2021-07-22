@@ -6,6 +6,7 @@ import java.util.List;
 import com.calendar.letitgobaby.repository.HolidayRepository;
 import com.calendar.letitgobaby.util.LunarSolarConverter;
 import com.calendar.letitgobaby.vo.Holiday;
+import com.calendar.letitgobaby.vo.HolidayInfo;
 import com.calendar.letitgobaby.vo.Solar;
 import com.calendar.letitgobaby.vo.payload.HolidayPayload;
 
@@ -27,15 +28,15 @@ public class HolidayBuilderService {
 
     for (int i = 0; i < hois.size(); i++) {
       Holiday holidayObj = hois.get(i);
-      HolidayPayload payload;
+      HolidayInfo holidayInfo;
       if (holidayObj.isLunar()) {
         Solar solar = converter.lunarToSolar(targetYear, holidayObj.getMonth(), holidayObj.getDay());
-        payload = new HolidayPayload(solar.getSolarYear(), solar.getSolarMonth(), solar.getSolarDay(), holidayObj.getDateName());
+        holidayInfo = new HolidayInfo(solar.getSolarYear(), solar.getSolarMonth(), solar.getSolarDay(), holidayObj.getDateName());
       } else {
-        payload = new HolidayPayload(targetYear, holidayObj.getMonth(), holidayObj.getDay(), holidayObj.getDateName());
+        holidayInfo = new HolidayInfo(targetYear, holidayObj.getMonth(), holidayObj.getDay(), holidayObj.getDateName());
       }
 
-      holidayArr.add(payload);
+      holidayArr.add(holidayInfo);
     }
     
     return holidayArr;
