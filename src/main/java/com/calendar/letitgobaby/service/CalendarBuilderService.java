@@ -3,11 +3,12 @@ package com.calendar.letitgobaby.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.calendar.letitgobaby.repository.HolidayRepository;
+// import com.calendar.letitgobaby.repository.HolidayRepository;
 import com.calendar.letitgobaby.util.LunarSolarConverter;
 import com.calendar.letitgobaby.vo.DateInfo;
 import com.calendar.letitgobaby.vo.DayOfWeekType;
 import com.calendar.letitgobaby.vo.Holiday;
+import com.calendar.letitgobaby.vo.HolidayInfo;
 import com.calendar.letitgobaby.vo.Lunar;
 import com.calendar.letitgobaby.vo.Solar;
 
@@ -19,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CalendarBuilderService {
 
-  private final HolidayRepository holidayRepository;
+  // private final HolidayRepository holidayRepository;
+	private final HolidayBuilderService holidayService;
 	private final LunarSolarConverter converter;
   
   public ArrayList getMonthCalendar(int year, int month, ArrayList<Holiday> holiList) {
@@ -86,7 +88,7 @@ public class CalendarBuilderService {
 		int lastDate;
 		Solar solar;
 		Lunar lunar;
-		if ((month - 2) < 1) {
+		if ((month - 2) < 1) { // TODO: 2달전 데이터 들어가는 케이스 발생
 			lastDate = getLastDate(year - 1, 12) - count;
 			solar = converter.solarInfo(year - 1, 12, lastDate);
 			lunar = converter.lunarInfo(year - 1, 12, lastDate);
@@ -126,16 +128,35 @@ public class CalendarBuilderService {
 		return info;
 	}
 
+
+	// private String holidayInfo(Solar solar, Lunar lunar) {
+	// 	Holiday holiday = holidayRepository.findHoliday(
+	// 		solar.getSolarMonth(), solar.getSolarDay(),
+	// 		lunar.getLunarMonth(), lunar.getLunarDay()
+	// 	);
+
+	// 	if (holiday == null) return null;
+
+	// 	return holiday.getDateName();
+	// }
 	
+
 	private String holidayInfo(Solar solar, Lunar lunar) {
-		Holiday holiday = holidayRepository.findHoliday(
-			solar.getSolarMonth(), solar.getSolarDay(),
-			lunar.getLunarMonth(), lunar.getLunarDay()
-		);
+		String result = null;
+		ArrayList holidays = holidayService.getHoliday(solar.getSolarYear());
+		for (int i = 0; i < holidays.size(); i++) {
+			HolidayInfo info = (HolidayInfo) holidays.get(i);
+			if (
+				info.getYear() == solar.getSolarYear() && 
+				info.getMonth() == solar.getSolarMonth() && 
+				info.getDate() == solar.getSolarDay()
+				) {
+					result = info.getDateName();
+					break;
+				}
+		}
 
-		if (holiday == null) return null;
-
-		return holiday.getDateName();
+		return result;
 	}
 
 	

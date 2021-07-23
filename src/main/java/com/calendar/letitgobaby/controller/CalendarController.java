@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import javax.validation.Valid;
 
+import com.calendar.letitgobaby.dto.request.CalendarRequest;
+import com.calendar.letitgobaby.dto.response.CalendarResponse;
 import com.calendar.letitgobaby.service.CalendarBuilderService;
-import com.calendar.letitgobaby.vo.command.CalendarCommand;
-import com.calendar.letitgobaby.vo.payload.CalendarPayload;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,24 +23,19 @@ public class CalendarController {
 
   private final CalendarBuilderService calendarBuilder;
 
-  /**
-   * @param {int} year, ?month, ?specificDay
-   * @return {JSONArray} - 1년 달력 데이터 or 한달 달력 데이터
-   * @throws error int가 아닌 값이 들어올때, 필수값인 year이 없을 때
-   */
   @PostMapping(value = "/calendar")
-  public ResponseEntity getCalendar(@RequestBody @Valid CalendarCommand command) {
+  public ResponseEntity getCalendar(@RequestBody @Valid CalendarRequest calReq) {
     ArrayList calendarList = new ArrayList();
-    if (command.getMonth() < 1) {
+    if (calReq.getMonth() < 1) {
       for (int i = 1; i < 13; i++) {
-        ArrayList monthList = calendarBuilder.getMonthCalendar(command.getYear(), i, command.getSpecificDay());
+        ArrayList monthList = calendarBuilder.getMonthCalendar(calReq.getYear(), i, calReq.getSpecificDay());
         calendarList.add(monthList);
       }
     } else {
-      calendarList = calendarBuilder.getMonthCalendar(command.getYear(), command.getMonth(), command.getSpecificDay());
+      calendarList = calendarBuilder.getMonthCalendar(calReq.getYear(), calReq.getMonth(), calReq.getSpecificDay());
     }
 
-    return ResponseEntity.ok(new CalendarPayload(calendarList));
+    return ResponseEntity.ok(new CalendarResponse(calendarList));
   }
 
 }
