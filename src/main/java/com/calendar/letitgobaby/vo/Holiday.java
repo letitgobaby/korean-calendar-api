@@ -13,7 +13,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
 @ToString
 @Entity
 @Table(name = "HOLIDAY")
