@@ -1,4 +1,4 @@
-package com.calendar.letitgobaby.vo.command;
+package com.calendar.letitgobaby.dto.request;
 
 import java.util.ArrayList;
 
@@ -14,8 +14,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CalendarCommand {
-
+public class CalendarRequest {
+  
   @NotNull(message = "year은 필수로 입력해야합니다.")
   @Min(value = 1, message = "year은 년도에 맞는 숫자를 입력하세요.")
   @Max(value = 3000, message = "year은 3000년 이전만 입력하세요.")
