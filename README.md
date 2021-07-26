@@ -8,12 +8,9 @@
 
 * JAVA의 Calendar, IBM의 ChineseCalendar 모듈 사용
 
-* 안 퍼오고 내가 만들었으니 쓰고싶은대로 쓰시오. ChineseCalendar 모듈 저작권은 모르겠음.
-
-
 * H2 DB에 기본적인 휴일 데이터(월, 일, 양/음력)를 입력한다. 물론 schema.sql에 있음.
 
-* 이 API 서버 목적에는 굳이 일반 DB를 쓸 이유를 못 느낌. Mem DB로도 충분히 사용 가능하다고 생각함.
+* 이 API 서버 목적에는 굳이 일반 DB를 쓸 이유를 못 느낌. mem-DB로 충분히 사용 가능하다고 생각함.
 
 
 
